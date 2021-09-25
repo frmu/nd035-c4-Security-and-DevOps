@@ -3,6 +3,8 @@ package com.example.demo.controllers;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import com.example.demo.model.requests.ModifyCartRequest;
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
+
+	private final Logger log = LoggerFactory.getLogger(CartController.class);
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -46,6 +50,7 @@ public class CartController {
 		IntStream.range(0, request.getQuantity())
 			.forEach(i -> cart.addItem(item.get()));
 		cartRepository.save(cart);
+		log.info("Item {} added to cart with quantity {}", request.getItemId(), request.getQuantity());
 		return ResponseEntity.ok(cart);
 	}
 	
@@ -63,6 +68,7 @@ public class CartController {
 		IntStream.range(0, request.getQuantity())
 			.forEach(i -> cart.removeItem(item.get()));
 		cartRepository.save(cart);
+		log.info("Item {} removed from cart with quantity {}. Remaining quantity {}", request.getItemId(), request.getQuantity(), cart.getItems().size());
 		return ResponseEntity.ok(cart);
 	}
 		
